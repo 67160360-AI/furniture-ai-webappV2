@@ -16,7 +16,7 @@ import {
 import { toast } from 'sonner'
 
 export default function AdminProductsPage() {
-  const { products, categories, updateProduct, deleteProduct } = useStore()
+  const { products, categories, refreshCatalog } = useStore()
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
 
@@ -32,15 +32,33 @@ export default function AdminProductsPage() {
     return true
   })
 
-  const handleStockChange = (productId: number, newStock: number) => {
-    updateProduct(productId, { stock: Math.max(0, newStock) })
-    toast.success('อัปเดตจำนวนสต็อกแล้ว')
+  const handleStockChange = async (productId: number, newStock: number) => {
+    try {
+      const response = await fetch(`/api/admin/products/${productId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stock: Math.max(0, newStock) }),
+      })
+      const result = await response.json().catch(() => null)
+      if (!response.ok) throw new Error(result?.error || 'อัปเดตจำนวนสต็อกไม่สำเร็จ')
+      await refreshCatalog()
+      toast.success('อัปเดตจำนวนสต็อกแล้ว')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'อัปเดตจำนวนสต็อกไม่สำเร็จ')
+    }
   }
 
-  const handleDelete = (productId: number, name: string) => {
+  const handleDelete = async (productId: number, name: string) => {
     if (confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบสินค้า "${name}"?`)) {
-      deleteProduct(productId)
-      toast.success(`ลบสินค้า "${name}" สำเร็จ`)
+      try {
+        const response = await fetch(`/api/admin/products/${productId}`, { method: 'DELETE' })
+        const result = await response.json().catch(() => null)
+        if (!response.ok) throw new Error(result?.error || 'ลบสินค้าไม่สำเร็จ')
+        await refreshCatalog()
+        toast.success(`ลบสินค้า "${name}" สำเร็จ`)
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'ลบสินค้าไม่สำเร็จ')
+      }
     }
   }
 
@@ -139,8 +157,11 @@ export default function AdminProductsPage() {
                       <input
                         type="number"
                         min="0"
-                        value={p.stock}
-                        onChange={(e) => handleStockChange(p.id, Number(e.target.value))}
+                        defaultValue={p.stock}
+                        onBlur={(e) => {
+                          const newStock = Number(e.currentTarget.value)
+                          if (newStock !== p.stock) void handleStockChange(p.id, newStock)
+                        }}
                         className="w-16 bg-[#F1F2FA] text-center font-bold text-[#383139] text-xs py-1 px-2 rounded-xl border border-[#E5DFEB]"
                       />
                     </td>

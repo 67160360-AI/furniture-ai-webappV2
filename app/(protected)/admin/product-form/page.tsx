@@ -12,7 +12,7 @@ function ProductFormContent() {
   const searchParams = useSearchParams()
   const editId = searchParams.get('id')
 
-  const { products, categories, addProduct, updateProduct } = useStore()
+  const { products, categories, refreshCatalog } = useStore()
 
   const isEdit = !!editId
   const existing = isEdit ? products.find((p) => p.id === Number(editId)) : null
@@ -37,6 +37,7 @@ function ProductFormContent() {
   const [isFeatured, setIsFeatured] = useState(false)
   const [isNew, setIsNew] = useState(true)
   const [madeToOrder, setMadeToOrder] = useState(false)
+  const [pending, setPending] = useState(false)
 
   // Populate form if editing
   useEffect(() => {
@@ -74,11 +75,15 @@ function ProductFormContent() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!name.trim() || !slug.trim()) {
       toast.error('กรุณากรอกชื่อสินค้าและ slug')
+      return
+    }
+    if (isEdit && !existing) {
+      toast.error('กำลังโหลดข้อมูลสินค้า กรุณารอสักครู่แล้วลองอีกครั้ง')
       return
     }
 
@@ -105,15 +110,23 @@ function ProductFormContent() {
       imageUrl,
     }
 
-    if (isEdit && existing) {
-      updateProduct(existing.id, payload)
-      toast.success(`อัปเดตข้อมูลสินค้า "${name}" สำเร็จ`)
-    } else {
-      addProduct(payload)
-      toast.success(`เพิ่มสินค้าใหม่ "${name}" สำเร็จ`)
+    setPending(true)
+    try {
+      const response = await fetch(isEdit && existing ? `/api/admin/products/${existing.id}` : '/api/admin/products', {
+        method: isEdit && existing ? 'PATCH' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const result = await response.json().catch(() => null)
+      if (!response.ok) throw new Error(result?.error || 'บันทึกสินค้าไม่สำเร็จ')
+      await refreshCatalog()
+      toast.success(isEdit ? `อัปเดตข้อมูลสินค้า "${name}" สำเร็จ` : `เพิ่มสินค้าใหม่ "${name}" สำเร็จ`)
+      router.push('/admin/products')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'บันทึกสินค้าไม่สำเร็จ')
+    } finally {
+      setPending(false)
     }
-
-    router.push('/admin/products')
   }
 
   return (
@@ -378,10 +391,11 @@ function ProductFormContent() {
           </Link>
           <button
             type="submit"
-            className="px-8 py-3 rounded-full bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold shadow-sm transition flex items-center gap-2"
+            disabled={pending}
+            className="px-8 py-3 rounded-full bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold shadow-sm transition flex items-center gap-2 disabled:opacity-60"
           >
             <Save className="w-4 h-4" />
-            <span>{isEdit ? 'บันทึกการแก้ไข' : 'บันทึกและเพิ่มสินค้าใหม่'}</span>
+            <span>{pending ? 'กำลังบันทึก…' : isEdit ? 'บันทึกการแก้ไข' : 'บันทึกและเพิ่มสินค้าใหม่'}</span>
           </button>
         </div>
 

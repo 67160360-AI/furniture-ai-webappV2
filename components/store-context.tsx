@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { signOut, useSession } from '@/lib/auth-client'
 import {
   Category,
@@ -39,6 +39,7 @@ interface StoreContextType {
   user: UserProfile | null
   cartCount: number
   cartSubtotal: number
+  refreshCatalog: () => Promise<void>
   appliedPromo: string | null
   discountAmount: number
   applyPromo: (code: string) => { success: boolean; message: string; discount: number }
@@ -79,17 +80,23 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [isHydrated, setIsHydrated] = useState(false)
   const [appliedPromo, setAppliedPromo] = useState<string | null>(null)
 
+  const refreshCatalog = useCallback(async () => {
+    const response = await fetch('/api/products', { cache: 'no-store' })
+    if (!response.ok) throw new Error('โหลดรายการสินค้าจากฐานข้อมูลไม่สำเร็จ')
+    const catalog = await response.json()
+    if (Array.isArray(catalog.products)) setProducts(catalog.products)
+    if (Array.isArray(catalog.categories)) setCategories(catalog.categories)
+  }, [])
+
   // Hydrate from localStorage on client load
   useEffect(() => {
     try {
       localStorage.removeItem('mf_user')
-      const savedProducts = localStorage.getItem('mf_products')
       const savedCategories = localStorage.getItem('mf_categories')
       const savedOrders = localStorage.getItem('mf_orders')
       const savedCart = localStorage.getItem('mf_cart')
       const savedPromo = localStorage.getItem('mf_promo')
 
-      if (savedProducts) setProducts(JSON.parse(savedProducts))
       if (savedCategories) setCategories(JSON.parse(savedCategories))
       if (savedOrders) setOrders(JSON.parse(savedOrders))
       if (savedCart) setCart(JSON.parse(savedCart))
@@ -98,7 +105,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       console.warn('Could not read from localStorage:', e)
     }
     setIsHydrated(true)
-  }, [])
+    try {
+      localStorage.removeItem('mf_products')
+    } catch {}
+    refreshCatalog().catch((error) => console.error('Could not hydrate product catalog:', error))
+  }, [refreshCatalog])
 
   // Prefer the persisted Better Auth account; fall back to the fixed admin
   // session used by the admin portal.
@@ -124,7 +135,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isHydrated) return
     try {
-      localStorage.setItem('mf_products', JSON.stringify(products))
       localStorage.setItem('mf_categories', JSON.stringify(categories))
       localStorage.setItem('mf_orders', JSON.stringify(orders))
       localStorage.setItem('mf_cart', JSON.stringify(cart))
@@ -133,7 +143,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     } catch (e) {
       console.warn('Could not write to localStorage:', e)
     }
-  }, [products, categories, orders, cart, appliedPromo, isHydrated])
+  }, [categories, orders, cart, appliedPromo, isHydrated])
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
   const cartSubtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
@@ -333,6 +343,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         user,
         cartCount,
         cartSubtotal,
+        refreshCatalog,
         appliedPromo,
         discountAmount,
         applyPromo,

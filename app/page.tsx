@@ -26,7 +26,9 @@ export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
 
   const featuredProducts = products.filter((p) => p.isFeatured).slice(0, 4)
-  const newArrivals = products.filter((p) => p.isNew).slice(0, 4)
+  const newArrivals = products
+    .filter((p) => p.isNew && !featuredProducts.some((featured) => featured.id === p.id))
+    .slice(0, 4)
 
   const displayedProducts =
     selectedCategory === 'all'
@@ -265,6 +267,29 @@ export default function HomePage() {
             </Link>
           </div>
         </section>
+
+        {newArrivals.length > 0 && (
+          <section className="max-w-7xl mx-auto px-4 md:px-8 py-12">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+              <div>
+                <div className="text-xs font-bold tracking-wider text-purple-700 uppercase mb-1">
+                  Just Arrived
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold text-[#383139] font-heading">
+                  สินค้าใหม่ล่าสุด
+                </h2>
+              </div>
+              <Link href="/products" className="text-sm font-bold text-purple-700 hover:underline">
+                ดูสินค้าทั้งหมด <ArrowRight className="inline w-4 h-4" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {newArrivals.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* AI DESIGNER & PRODUCTION SOLVER PROMO BANNER */}
         <section className="max-w-7xl mx-auto px-4 md:px-8 py-12">
