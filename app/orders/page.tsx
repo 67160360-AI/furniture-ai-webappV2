@@ -17,7 +17,10 @@ import {
 } from 'lucide-react'
 
 export default function OrdersPage() {
-  const { orders } = useStore()
+  const { orders, user } = useStore()
+  const userOrders = user
+    ? orders.filter((order) => order.email.trim().toLowerCase() === user.email.trim().toLowerCase())
+    : []
 
   const statusBadges: Record<string, { label: string; color: string; icon: any }> = {
     pending: { label: 'รอชำระเงิน', color: 'bg-amber-100 text-amber-800 border-amber-200', icon: Clock },
@@ -47,7 +50,7 @@ export default function OrdersPage() {
           </p>
         </div>
 
-        {orders.length === 0 ? (
+        {userOrders.length === 0 ? (
           <div className="bg-[#FFFDF7] rounded-[36px] p-12 text-center border border-[#E5DFEB] shadow-sm max-w-md mx-auto my-12">
             <Package className="w-16 h-16 text-[#706A76] mx-auto mb-3 opacity-60" />
             <h2 className="text-lg font-bold text-[#383139] mb-1">ยังไม่มีประวัติคำสั่งซื้อ</h2>
@@ -63,7 +66,7 @@ export default function OrdersPage() {
           </div>
         ) : (
           <div className="space-y-6">
-            {orders.map((order) => {
+            {userOrders.map((order) => {
               const statusInfo = statusBadges[order.status] || statusBadges.pending
               const StatusIcon = statusInfo.icon
 
