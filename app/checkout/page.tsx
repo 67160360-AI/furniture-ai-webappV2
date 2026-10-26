@@ -28,6 +28,7 @@ import {
   Clock,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { DEFAULT_PAYMENT_SETTINGS, type PaymentMethod, type PaymentSettings } from '@/lib/payment-settings'
 
 /* ── Isolated subcomponent: countdown timer ── */
 /* Re-renders once/second WITHOUT re-rendering the entire CheckoutPage */
@@ -117,9 +118,11 @@ const CreditCardForm = memo(function CreditCardForm() {
 function BankTransferForm({
   copiedAccount,
   onCopy,
+  settings,
 }: {
   copiedAccount: boolean
   onCopy: (text: string, label: string) => void
+  settings: PaymentSettings['bankTransfer']
 }) {
   const [slipFile, setSlipFile] = useState<string | null>(null)
 
@@ -131,13 +134,13 @@ function BankTransferForm({
       </div>
       <div className="bg-card p-3.5 rounded-2xl border border-border flex items-center justify-between text-xs transition-colors">
         <div>
-          <div className="font-bold text-foreground">ธนาคารกสิกรไทย (KBANK)</div>
-          <div className="text-muted-foreground">ชื่อบัญชี: บจก. เมซง ฟอร์ม จำกัด</div>
-          <div className="font-mono font-semibold text-foreground text-sm mt-0.5 tracking-wide">099-2-84912-3</div>
+          <div className="font-bold text-foreground">{settings.bankName}</div>
+          <div className="text-muted-foreground">ชื่อบัญชี: {settings.accountName}</div>
+          <div className="font-mono font-semibold text-foreground text-sm mt-0.5 tracking-wide">{settings.accountNumber}</div>
         </div>
         <button
           type="button"
-          onClick={() => onCopy('0992849123', 'เลขบัญชี')}
+          onClick={() => onCopy(settings.accountNumber.replace(/\D/g, ''), 'เลขบัญชี')}
           className={`min-h-[44px] min-w-[44px] px-3.5 py-2 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 touch-manipulation ${
             copiedAccount
               ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300'
@@ -204,6 +207,7 @@ export default function CheckoutPage() {
   const [city, setCity] = useState('กรุงเทพมหานคร')
   const [postalCode, setPostalCode] = useState('10110')
   const [note, setNote] = useState('กรุณาโทรแจ้งก่อนส่ง 30 นาที')
+  const [paymentSettings, setPaymentSettings] = useState<PaymentSettings>(DEFAULT_PAYMENT_SETTINGS)
 
   // Validation Errors
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
@@ -211,8 +215,43 @@ export default function CheckoutPage() {
 
   // Shipping & Payment Method
   const [shippingMethod, setShippingMethod] = useState<'standard' | 'express' | 'pickup'>('express')
-  const [paymentMethod, setPaymentMethod] = useState<'promptpay' | 'bank_transfer' | 'credit_card' | 'cod'>('promptpay')
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('promptpay')
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    let active = true
+    fetch('/api/payment-settings', { cache: 'no-store' })
+      .then(async (response) => {
+        const result = await response.json().catch(() => null)
+        if (!response.ok) throw new Error(result?.error || 'โหลดวิธีชำระเงินไม่สำเร็จ')
+        if (active && result?.payment) {
+          setPaymentSettings({
+            ...DEFAULT_PAYMENT_SETTINGS,
+            ...result.payment,
+            promptpay: { ...DEFAULT_PAYMENT_SETTINGS.promptpay, ...result.payment.promptpay },
+            creditCard: { ...DEFAULT_PAYMENT_SETTINGS.creditCard, ...result.payment.creditCard },
+            bankTransfer: { ...DEFAULT_PAYMENT_SETTINGS.bankTransfer, ...result.payment.bankTransfer },
+            cod: { ...DEFAULT_PAYMENT_SETTINGS.cod, ...result.payment.cod },
+          })
+        }
+      })
+      .catch((error) => console.error('Could not load checkout payment options:', error))
+    return () => { active = false }
+  }, [])
+
+  const enabledPaymentMethods: PaymentMethod[] = [
+    ...(paymentSettings.promptpay.enabled ? ['promptpay' as const] : []),
+    ...(paymentSettings.creditCard.enabled ? ['credit_card' as const] : []),
+    ...(paymentSettings.bankTransfer.enabled ? ['bank_transfer' as const] : []),
+    ...(paymentSettings.cod.enabled ? ['cod' as const] : []),
+  ]
+  const enabledPaymentMethodsKey = enabledPaymentMethods.join(',')
+
+  useEffect(() => {
+    if (!enabledPaymentMethods.includes(paymentMethod) && enabledPaymentMethods[0]) {
+      setPaymentMethod(enabledPaymentMethods[0])
+    }
+  }, [enabledPaymentMethodsKey, paymentMethod])
 
   // PromptPay Modal State
   const [showPromptPayModal, setShowPromptPayModal] = useState(false)
@@ -381,6 +420,11 @@ export default function CheckoutPage() {
       return
     }
 
+    if (!enabledPaymentMethods.length || !enabledPaymentMethods.includes(paymentMethod)) {
+      toast.error('ขณะนี้ร้านยังไม่ได้เปิดวิธีชำระเงิน กรุณาติดต่อร้านค้า')
+      return
+    }
+
     // If PromptPay is selected, open the modal for user verification
     if (paymentMethod === 'promptpay') {
       setShowPromptPayModal(true)
@@ -388,7 +432,7 @@ export default function CheckoutPage() {
     }
 
     processOrderCreation()
-  }, [validateAll, cart.length, paymentMethod, processOrderCreation, router])
+  }, [validateAll, cart.length, paymentMethod, enabledPaymentMethodsKey, processOrderCreation, router])
 
   const copyToClipboard = useCallback((text: string, label: string) => {
     navigator.clipboard.writeText(text)
@@ -822,7 +866,7 @@ export default function CheckoutPage() {
                 </legend>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <label
+                  {paymentSettings.promptpay.enabled && <label
                     className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary ${
                       paymentMethod === 'promptpay'
                         ? 'bg-accent/40 border-purple-400 font-semibold shadow-sm'
@@ -854,9 +898,9 @@ export default function CheckoutPage() {
                       <div className="font-bold text-foreground">PromptPay QR Code</div>
                       <div className="text-xs text-muted-foreground">สแกนชำระผ่านทุกแอปธนาคาร</div>
                     </div>
-                  </label>
+                  </label>}
 
-                  <label
+                  {paymentSettings.creditCard.enabled && <label
                     className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary ${
                       paymentMethod === 'credit_card'
                         ? 'bg-accent/40 border-purple-400 font-semibold shadow-sm'
@@ -888,9 +932,9 @@ export default function CheckoutPage() {
                       <div className="font-bold text-foreground">บัตรเครดิต / เดบิต</div>
                       <div className="text-xs text-muted-foreground">Visa, Mastercard, JCB</div>
                     </div>
-                  </label>
+                  </label>}
 
-                  <label
+                  {paymentSettings.bankTransfer.enabled && <label
                     className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary ${
                       paymentMethod === 'bank_transfer'
                         ? 'bg-accent/40 border-purple-400 font-semibold shadow-sm'
@@ -920,11 +964,11 @@ export default function CheckoutPage() {
                     <Building2 className="w-5 h-5 text-purple-700 shrink-0" />
                     <div className="text-xs">
                       <div className="font-bold text-foreground">โอนเงินธนาคาร</div>
-                      <div className="text-xs text-muted-foreground">กสิกรไทย / ไทยพาณิชย์</div>
+                      <div className="text-xs text-muted-foreground">{paymentSettings.bankTransfer.bankName}</div>
                     </div>
-                  </label>
+                  </label>}
 
-                  <label
+                  {paymentSettings.cod.enabled && <label
                     className={`flex items-center gap-3 p-3.5 rounded-2xl border cursor-pointer transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary ${
                       paymentMethod === 'cod'
                         ? 'bg-accent/40 border-purple-400 font-semibold shadow-sm'
@@ -956,14 +1000,18 @@ export default function CheckoutPage() {
                       <div className="font-bold text-foreground">เก็บเงินปลายทาง (COD)</div>
                       <div className="text-xs text-muted-foreground">ชำระเงินเมื่อได้รับสินค้า</div>
                     </div>
-                  </label>
+                  </label>}
                 </div>
 
-                {/* Sub-form based on Payment Method */}
-                {paymentMethod === 'credit_card' && <CreditCardForm />}
+                {!enabledPaymentMethods.length && (
+                  <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-800">ร้านยังไม่ได้เปิดวิธีชำระเงิน กรุณาติดต่อร้านค้า</p>
+                )}
 
-                {paymentMethod === 'bank_transfer' && (
-                  <BankTransferForm copiedAccount={copiedAccount} onCopy={copyToClipboard} />
+                {/* Sub-form based on Payment Method */}
+                {paymentMethod === 'credit_card' && paymentSettings.creditCard.enabled && <CreditCardForm />}
+
+                {paymentMethod === 'bank_transfer' && paymentSettings.bankTransfer.enabled && (
+                  <BankTransferForm copiedAccount={copiedAccount} onCopy={copyToClipboard} settings={paymentSettings.bankTransfer} />
                 )}
               </fieldset>
             </div>
@@ -1081,7 +1129,7 @@ export default function CheckoutPage() {
               {/* Submit Button (Desktop) */}
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !enabledPaymentMethods.length}
                 aria-busy={isSubmitting}
                 className="w-full py-4 rounded-full bg-primary text-foreground font-bold text-sm clay-sm clay-press hover:opacity-90 active:scale-98 transition flex items-center justify-center gap-2 disabled:opacity-50"
               >
@@ -1121,7 +1169,7 @@ export default function CheckoutPage() {
               </div>
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !enabledPaymentMethods.length}
                 aria-busy={isSubmitting}
                 className="min-h-[44px] px-6 py-2.5 rounded-full bg-primary text-foreground font-bold text-xs clay-sm hover:opacity-90 active:scale-98 transition flex items-center justify-center gap-1.5 disabled:opacity-50 shrink-0 touch-manipulation select-none"
               >
@@ -1174,45 +1222,18 @@ export default function CheckoutPage() {
               <div className="w-full flex items-center justify-center bg-[#003D6B] py-1 px-3 rounded-lg text-white font-bold text-xs mb-2">
                 พร้อมเพย์ PromptPay
               </div>
-              {/* Synthetic Vector QR Code */}
-              <div className="w-44 h-44 bg-neutral-900 p-2 rounded-lg flex items-center justify-center">
-                <svg viewBox="0 0 100 100" className="w-full h-full fill-white">
-                  {/* Top-Left Finder */}
-                  <rect x="5" y="5" width="28" height="28" fill="white" />
-                  <rect x="9" y="9" width="20" height="20" fill="black" />
-                  <rect x="13" y="13" width="12" height="12" fill="white" />
-                  {/* Top-Right Finder */}
-                  <rect x="67" y="5" width="28" height="28" fill="white" />
-                  <rect x="71" y="9" width="20" height="20" fill="black" />
-                  <rect x="75" y="13" width="12" height="12" fill="white" />
-                  {/* Bottom-Left Finder */}
-                  <rect x="5" y="67" width="28" height="28" fill="white" />
-                  <rect x="9" y="71" width="20" height="20" fill="black" />
-                  <rect x="13" y="75" width="12" height="12" fill="white" />
-                  {/* Data Matrix Dots Mock */}
-                  <rect x="38" y="10" width="6" height="6" />
-                  <rect x="48" y="10" width="6" height="6" />
-                  <rect x="58" y="10" width="6" height="6" />
-                  <rect x="38" y="24" width="6" height="6" />
-                  <rect x="48" y="32" width="6" height="6" />
-                  <rect x="58" y="24" width="6" height="6" />
-                  <rect x="10" y="38" width="6" height="6" />
-                  <rect x="22" y="44" width="6" height="6" />
-                  <rect x="38" y="48" width="8" height="8" />
-                  <rect x="52" y="48" width="8" height="8" />
-                  <rect x="70" y="38" width="6" height="6" />
-                  <rect x="82" y="44" width="6" height="6" />
-                  <rect x="38" y="65" width="6" height="6" />
-                  <rect x="48" y="72" width="6" height="6" />
-                  <rect x="58" y="65" width="6" height="6" />
-                  <rect x="70" y="70" width="6" height="6" />
-                  <rect x="82" y="80" width="6" height="6" />
-                  <rect x="68" y="82" width="6" height="6" />
-                </svg>
-              </div>
+              {paymentSettings.promptpay.qrImageUrl ? (
+                <img src={paymentSettings.promptpay.qrImageUrl} alt="QR สำหรับชำระเงิน PromptPay" className="w-44 h-44 object-contain rounded-lg" />
+              ) : <div className="w-44 h-44 bg-neutral-100 p-3 rounded-lg flex flex-col items-center justify-center text-neutral-600">
+                <QrCode className="w-12 h-12 mb-2" />
+                <span className="text-center text-[10px]">ร้านค้ายังไม่ได้ตั้งค่ารูป QR สำหรับรับเงินจริง</span>
+              </div>}
               <div className="text-xs text-neutral-800 font-semibold mt-2">
-                บจก. เมซง ฟอร์ม จำกัด
+                {paymentSettings.promptpay.accountName}
               </div>
+              {paymentSettings.promptpay.promptpayId && (
+                <div className="text-xs text-neutral-600 mt-1">PromptPay: {paymentSettings.promptpay.promptpayId}</div>
+              )}
             </div>
 
             <div className="space-y-1">

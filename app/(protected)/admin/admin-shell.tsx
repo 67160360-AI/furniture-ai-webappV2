@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Package, PlusCircle, ShoppingBag, FolderTree, Users, Settings, Cpu, LogOut, Store, Menu, X } from 'lucide-react'
+import { LayoutDashboard, Package, PlusCircle, ShoppingBag, FolderTree, Users, Settings, Cpu, LogOut, Store, Menu, X, CreditCard } from 'lucide-react'
 
 const items = [
   { href: '/admin', label: 'แดชบอร์ด (Overview)', icon: LayoutDashboard },
@@ -13,6 +13,7 @@ const items = [
   { href: '/admin/categories', label: 'หมวดหมู่สินค้า (Categories)', icon: FolderTree },
   { href: '/admin/customers', label: 'รายชื่อลูกค้า (Customers)', icon: Users },
   { href: '/admin/settings', label: 'ตั้งค่าร้านค้า (Store Settings)', icon: Settings },
+  { href: '/admin/payment-settings', label: 'วิธีชำระเงิน (Payments)', icon: CreditCard },
   { href: '/admin/ai-settings', label: 'ตั้งค่าระบบ AI (AI Engine)', icon: Cpu },
 ]
 

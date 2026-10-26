@@ -1,6 +1,7 @@
 import 'server-only'
 import { db } from '@/lib/db'
 import { storeSettings } from '@/lib/db/schema'
+import { DEFAULT_PAYMENT_SETTINGS, type PaymentSettings } from '@/lib/payment-settings'
 
 export type StoreInfo = {
   name: string
@@ -12,10 +13,6 @@ export type StoreInfo = {
 }
 export type ShippingSettings = { standardFee: number; expressFee: number; freeThreshold: number }
 export type BannerSettings = { enabled: boolean; text: string }
-export type PaymentSettings = {
-  bankTransfer: { enabled: boolean; bankName: string; accountName: string; accountNumber: string }
-  cod: { enabled: boolean }
-}
 export type Settings = {
   store: StoreInfo
   shipping: ShippingSettings
@@ -34,10 +31,7 @@ export const DEFAULT_SETTINGS: Settings = {
   },
   shipping: { standardFee: 500, expressFee: 1200, freeThreshold: 30000 },
   banner: { enabled: false, text: '' },
-  payment: {
-    bankTransfer: { enabled: false, bankName: '', accountName: '', accountNumber: '' },
-    cod: { enabled: true },
-  },
+  payment: DEFAULT_PAYMENT_SETTINGS,
 }
 
 export async function getSettings(): Promise<Settings> {
@@ -48,6 +42,8 @@ export async function getSettings(): Promise<Settings> {
     shipping: { ...DEFAULT_SETTINGS.shipping, ...map.shipping },
     banner: { ...DEFAULT_SETTINGS.banner, ...map.banner },
     payment: {
+      promptpay: { ...DEFAULT_SETTINGS.payment.promptpay, ...map.payment?.promptpay },
+      creditCard: { ...DEFAULT_SETTINGS.payment.creditCard, ...map.payment?.creditCard },
       bankTransfer: { ...DEFAULT_SETTINGS.payment.bankTransfer, ...map.payment?.bankTransfer },
       cod: { ...DEFAULT_SETTINGS.payment.cod, ...map.payment?.cod },
     },
