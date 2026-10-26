@@ -60,6 +60,7 @@ interface StoreContextType {
   deleteCategory: (id: number) => void
   // Auth Demo
   loginAs: (role: 'customer') => void
+  loginAdmin: (user: UserProfile) => void
   logout: () => void
   // Reset demo data
   resetDemoData: () => void
@@ -299,6 +300,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     })
   }
 
+  const loginAdmin = (admin: UserProfile) => {
+    setUser(admin)
+  }
+
   const logout = () => {
     setUser(null)
     void fetch('/api/admin-session', { method: 'DELETE' }).catch(() => {})
@@ -339,6 +344,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         updateCategory,
         deleteCategory,
         loginAs,
+        loginAdmin,
         logout,
         resetDemoData,
       }}

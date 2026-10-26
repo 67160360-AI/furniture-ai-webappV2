@@ -2,12 +2,16 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { CapsuleNavbar } from '@/components/capsule-navbar'
 import { Footer } from '@/components/footer'
+import { useStore, type UserProfile } from '@/components/store-context'
 import { Lock, Mail, ArrowRight } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function LoginPage() {
+  const router = useRouter()
+  const { loginAdmin } = useStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -29,8 +33,9 @@ export default function LoginPage() {
       })
       const result = await response.json()
       if (!response.ok) throw new Error(result.error || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง')
+      loginAdmin(result.user as UserProfile)
       toast.success('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับกลับมา')
-      window.location.assign('/')
+      router.replace('/')
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'เข้าสู่ระบบไม่สำเร็จ')
     } finally {
