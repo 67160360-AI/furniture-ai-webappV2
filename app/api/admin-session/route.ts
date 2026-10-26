@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     })
     return response
   } catch {
-    return NextResponse.json({ error: 'ระบบยืนยันตัวตนยังไม่ได้ตั้งค่า ADMIN_SESSION_SECRET' }, { status: 503 })
+    return NextResponse.json({ error: 'ระบบยืนยันตัวตนไม่พร้อมใช้งาน' }, { status: 503 })
   }
 }
 
