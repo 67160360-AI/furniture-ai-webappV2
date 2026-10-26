@@ -1,0 +1,31 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { ADMIN_COOKIE, createAdminToken, isAdminCredentials } from '@/lib/admin-session'
+
+export async function POST(request: NextRequest) {
+  const body = await request.json().catch(() => null)
+  if (!body || typeof body.email !== 'string' || typeof body.password !== 'string') {
+    return NextResponse.json({ error: 'กรุณากรอกอีเมลและรหัสผ่าน' }, { status: 400 })
+  }
+  if (!isAdminCredentials(body.email, body.password)) {
+    return NextResponse.json({ error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' }, { status: 401 })
+  }
+  try {
+    const response = NextResponse.json({ ok: true })
+    response.cookies.set(ADMIN_COOKIE, createAdminToken(), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/admin',
+      maxAge: 60 * 60 * 8,
+    })
+    return response
+  } catch {
+    return NextResponse.json({ error: 'ระบบยืนยันตัวตนยังไม่ได้ตั้งค่า ADMIN_SESSION_SECRET' }, { status: 503 })
+  }
+}
+
+export async function DELETE() {
+  const response = NextResponse.json({ ok: true })
+  response.cookies.set(ADMIN_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/admin', maxAge: 0 })
+  return response
+}

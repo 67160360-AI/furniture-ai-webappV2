@@ -384,43 +384,6 @@ export function CapsuleNavbar() {
                         </Link>
                       </div>
 
-                      {/* Quick Demo Switcher */}
-                      <div className="border-t border-[#E5DFEB] pt-2 px-1">
-                        <div className="text-xs font-semibold text-[#706A76] mb-1.5 uppercase tracking-wider">
-                          สลับโหมดทดสอบ (Demo Switcher)
-                        </div>
-                        <div className="grid grid-cols-2 gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              loginAs('customer')
-                              setUserDropdownOpen(false)
-                            }}
-                            className={`text-xs py-1.5 rounded-xl border text-center font-medium transition ${
-                              user.role === 'customer'
-                                ? 'bg-[#C0EFDC] border-[#9ad9bf] text-[#383139] font-bold'
-                                : 'bg-white border-[#E5DFEB] text-[#706A76] hover:bg-[#F1F2FA]'
-                            }`}
-                          >
-                            ลูกค้าทั่วไป
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              loginAs('admin')
-                              setUserDropdownOpen(false)
-                            }}
-                            className={`text-xs py-1.5 rounded-xl border text-center font-medium transition ${
-                              user.role === 'admin'
-                                ? 'bg-[#DED0F9] border-[#b9a3ee] text-[#383139] font-bold'
-                                : 'bg-white border-[#E5DFEB] text-[#706A76] hover:bg-[#F1F2FA]'
-                            }`}
-                          >
-                            แอดมินร้าน
-                          </button>
-                        </div>
-                      </div>
-
                       <div className="border-t border-[#E5DFEB] pt-1">
                         <button
                           type="button"

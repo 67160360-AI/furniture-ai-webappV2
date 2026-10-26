@@ -22,15 +22,9 @@ export default function LoginPage() {
       return
     }
 
-    if (email.toLowerCase().includes('admin')) {
-      loginAs('admin')
-      toast.success('เข้าสู่ระบบในฐานะ Admin ผู้ดูแลระบบ')
-      router.push('/admin')
-    } else {
-      loginAs('customer')
-      toast.success('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับกลับมา')
-      router.push('/')
-    }
+    loginAs('customer')
+    toast.success('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับกลับมา')
+    router.push('/')
   }
 
   return (

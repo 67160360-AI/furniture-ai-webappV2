@@ -59,7 +59,7 @@ interface StoreContextType {
   updateCategory: (id: number, category: Partial<Category>) => void
   deleteCategory: (id: number) => void
   // Auth Demo
-  loginAs: (role: 'customer' | 'admin') => void
+  loginAs: (role: 'customer') => void
   logout: () => void
   // Reset demo data
   resetDemoData: () => void
@@ -278,22 +278,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setCategories((prev) => prev.filter((c) => c.id !== id))
   }
 
-  const loginAs = (role: 'customer' | 'admin') => {
-    if (role === 'admin') {
-      setUser({
-        id: 'admin-1',
-        name: 'Maison Forme Admin',
-        email: 'admin@maisonforme.co',
-        role: 'admin',
-      })
-    } else {
-      setUser({
-        id: 'u-demo-1',
-        name: 'คุณพัชราภรณ์ วงศ์สว่าง',
-        email: 'patcha@example.com',
-        role: 'customer',
-      })
-    }
+  const loginAs = (_role: 'customer') => {
+    setUser({
+      id: 'u-demo-1',
+      name: 'คุณพัชราภรณ์ วงศ์สว่าง',
+      email: 'patcha@example.com',
+      role: 'customer',
+    })
   }
 
   const logout = () => {
