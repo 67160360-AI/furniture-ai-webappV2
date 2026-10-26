@@ -298,6 +298,7 @@ export function CapsuleNavbar() {
                 }}
                 aria-expanded={userDropdownOpen}
                 aria-haspopup="true"
+                aria-label={`เมนูบัญชี ${user.role === 'admin' ? 'ผู้ดูแลระบบ' : user.name}`}
                 className="inline-flex min-w-0 max-w-[170px] items-center gap-1.5 bg-[#FFFDF7] hover:bg-[#F1F2FA] px-2.5 py-1.5 rounded-full border border-[#E5DFEB] shadow-[4px_4px_10px_rgba(91,79,115,0.08),-3px_-3px_8px_rgba(255,255,255,0.9)] active:scale-95 transition-all text-[#383139] shrink whitespace-nowrap select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F6A3CA]"
               >
                 <div
@@ -307,9 +308,6 @@ export function CapsuleNavbar() {
                 >
                   {user.name.charAt(0)}
                 </div>
-                <span className="text-xs font-medium leading-none tracking-normal hidden 2xl:inline min-w-0 max-w-[70px] 2xl:max-w-[90px] truncate whitespace-nowrap">
-                  {user.role === 'admin' ? 'ผู้ดูแลระบบ' : user.name}
-                </span>
                 <ChevronDown
                   className={`w-3 h-3 text-[#706A76] shrink-0 transition-transform duration-200 ${
                     userDropdownOpen ? 'rotate-180' : ''
