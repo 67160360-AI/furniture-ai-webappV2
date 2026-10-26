@@ -2,29 +2,40 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { CapsuleNavbar } from '@/components/capsule-navbar'
 import { Footer } from '@/components/footer'
-import { useStore } from '@/components/store-context'
 import { Lock, Mail, ArrowRight } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function LoginPage() {
-  const router = useRouter()
-  const { loginAs } = useStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleManualLogin = (e: React.FormEvent) => {
+  const [pending, setPending] = useState(false)
+
+  const handleManualLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email || !password) {
       toast.error('กรุณากรอกอีเมลและรหัสผ่าน')
       return
     }
 
-    loginAs('customer')
-    toast.success('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับกลับมา')
-    router.push('/')
+    setPending(true)
+    try {
+      const response = await fetch('/api/admin-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.error || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง')
+      toast.success('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับกลับมา')
+      window.location.assign('/')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'เข้าสู่ระบบไม่สำเร็จ')
+    } finally {
+      setPending(false)
+    }
   }
 
   return (
@@ -56,7 +67,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   required
-                  placeholder="patcha@example.com"
+                  placeholder="อีเมลบัญชีแอดมิน"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-[#F1F2FA] text-[#383139] text-xs pl-9 pr-4 py-3 rounded-2xl border border-transparent focus:border-[#F6A3CA] focus:bg-white focus:outline-none"
@@ -84,9 +95,10 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-full bg-[#F6A3CA] hover:bg-[#f08bb9] text-white font-bold text-sm shadow-[6px_8px_20px_rgba(246,163,202,0.4)] active:scale-98 transition flex items-center justify-center gap-2"
+              disabled={pending}
+              className="w-full py-3.5 rounded-full bg-[#F6A3CA] hover:bg-[#f08bb9] text-white font-bold text-sm shadow-[6px_8px_20px_rgba(246,163,202,0.4)] active:scale-98 transition flex items-center justify-center gap-2 disabled:opacity-60"
             >
-              <span>เข้าสู่ระบบ</span>
+              <span>{pending ? 'กำลังตรวจสอบ…' : 'เข้าสู่ระบบ'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>

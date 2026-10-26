@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { ADMIN_COOKIE, createAdminToken, isAdminCredentials } from '@/lib/admin-session'
+import { cookies } from 'next/headers'
+import { ADMIN_COOKIE, createAdminToken, isAdminCredentials, isValidAdminToken } from '@/lib/admin-session'
+
+export async function GET() {
+  const token = (await cookies()).get(ADMIN_COOKIE)?.value
+  if (!isValidAdminToken(token)) return NextResponse.json({ user: null })
+  const email = process.env.ADMIN_EMAIL ?? 'admin67160360@gmail.com'
+  return NextResponse.json({ user: { id: 'admin', name: email.split('@')[0], email, role: 'admin' as const } })
+}
 
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null)
@@ -15,7 +23,7 @@ export async function POST(request: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      path: '/admin',
+      path: '/',
       maxAge: 60 * 60 * 8,
     })
     return response
@@ -26,6 +34,6 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE() {
   const response = NextResponse.json({ ok: true })
-  response.cookies.set(ADMIN_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/admin', maxAge: 0 })
+  response.cookies.set(ADMIN_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/', maxAge: 0 })
   return response
 }

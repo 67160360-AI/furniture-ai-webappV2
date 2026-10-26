@@ -97,6 +97,17 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setIsHydrated(true)
   }, [])
 
+  // Read the signed admin session from the server so the account shown in the
+  // storefront matches the account that guards the admin area.
+  useEffect(() => {
+    fetch('/api/admin-session', { cache: 'no-store' })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.user) setUser(result.user as UserProfile)
+      })
+      .catch(() => {})
+  }, [])
+
   // Sync back to localStorage
   useEffect(() => {
     if (!isHydrated) return
@@ -279,6 +290,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }
 
   const loginAs = (_role: 'customer') => {
+    void fetch('/api/admin-session', { method: 'DELETE' }).catch(() => {})
     setUser({
       id: 'u-demo-1',
       name: 'คุณพัชราภรณ์ วงศ์สว่าง',
@@ -289,6 +301,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     setUser(null)
+    void fetch('/api/admin-session', { method: 'DELETE' }).catch(() => {})
   }
 
   const resetDemoData = () => {
