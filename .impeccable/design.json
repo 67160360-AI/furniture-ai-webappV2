@@ -1,0 +1,292 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-26T18:25:00Z",
+  "title": "Design System: Maison Forme",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Blush Rose",
+        "canonical": "#f6a3ca",
+        "tonalRamp": [
+          "#5e223d",
+          "#8a3359",
+          "#b64c78",
+          "#dc749f",
+          "#f6a3ca",
+          "#fabdd7",
+          "#fcd9e7",
+          "#fef0f6"
+        ]
+      },
+      "secondary": {
+        "role": "secondary",
+        "displayName": "Pistachio Mint",
+        "canonical": "#c0efdc",
+        "tonalRamp": [
+          "#1b4d3a",
+          "#2f755a",
+          "#4ba07e",
+          "#76cca8",
+          "#c0efdc",
+          "#d4f5e7",
+          "#e6faf1",
+          "#f4fdf9"
+        ]
+      },
+      "accent": {
+        "role": "tertiary",
+        "displayName": "Soft Lavender",
+        "canonical": "#ded0f9",
+        "tonalRamp": [
+          "#342456",
+          "#513b82",
+          "#7355b2",
+          "#a68be0",
+          "#ded0f9",
+          "#e8defb",
+          "#f2ecfd",
+          "#faf8fe"
+        ]
+      },
+      "yellow": {
+        "role": "tertiary",
+        "displayName": "Butter Yellow",
+        "canonical": "#f9e7a8",
+        "tonalRamp": [
+          "#544510",
+          "#80691d",
+          "#b0922f",
+          "#deb94e",
+          "#f9e7a8",
+          "#fbeec0",
+          "#fdf5d8",
+          "#fffbf0"
+        ]
+      },
+      "blue": {
+        "role": "tertiary",
+        "displayName": "Powder Blue",
+        "canonical": "#c5e5fb",
+        "tonalRamp": [
+          "#183d57",
+          "#285e84",
+          "#3e82b4",
+          "#6baee1",
+          "#c5e5fb",
+          "#d8edfd",
+          "#eaf4fe",
+          "#f6faff"
+        ]
+      },
+      "cream-surface": {
+        "role": "neutral",
+        "displayName": "Ceramic Cream",
+        "canonical": "#fffdf7",
+        "tonalRamp": [
+          "#4d473b",
+          "#756d5b",
+          "#a19680",
+          "#d1c6af",
+          "#ede6d6",
+          "#f7f3e8",
+          "#fffdf7",
+          "#ffffff"
+        ]
+      },
+      "base-bg": {
+        "role": "neutral",
+        "displayName": "Periwinkle Base",
+        "canonical": "#f1f2fa",
+        "tonalRamp": [
+          "#383a52",
+          "#565979",
+          "#797da4",
+          "#a5a9d1",
+          "#cbcfec",
+          "#e1e3f5",
+          "#f1f2fa",
+          "#fafaff"
+        ]
+      },
+      "text-main": {
+        "role": "neutral",
+        "displayName": "Deep Cocoa Plum",
+        "canonical": "#383139",
+        "tonalRamp": [
+          "#191519",
+          "#29242a",
+          "#383139",
+          "#574e59",
+          "#796e7c",
+          "#a195a4",
+          "#cdbed1",
+          "#f0e9f2"
+        ]
+      },
+      "text-muted": {
+        "role": "neutral",
+        "displayName": "Muted Mauve Slate",
+        "canonical": "#746d78",
+        "tonalRamp": [
+          "#2a272c",
+          "#413c44",
+          "#5c5560",
+          "#746d78",
+          "#948c98",
+          "#b7afbc",
+          "#d8d3db",
+          "#f2f0f4"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headlines and high-impact claims on storefront and showcase surfaces."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Category headers, designer sections, and major drawer titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Product card names, specification section dividers, and modal headers."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "General reading copy, descriptions, and material specifications."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Form field labels, badge chips, prices, and dimensional stats."
+      }
+    },
+    "shadows": [
+      {
+        "name": "clay",
+        "value": "12px 12px 28px rgba(91, 82, 112, 0.1), -8px -8px 24px rgba(255, 255, 255, 0.9), inset 2px 2px 5px rgba(255, 255, 255, 0.85), inset -2px -2px 6px rgba(110, 95, 130, 0.06)",
+        "purpose": "Resting product cards, designer workspace containers, and floating panels."
+      },
+      {
+        "name": "clay-sm",
+        "value": "6px 6px 14px rgba(91, 82, 112, 0.1), -4px -4px 12px rgba(255, 255, 255, 0.85), inset 1px 1px 3px rgba(255, 255, 255, 0.85), inset -1px -1px 4px rgba(110, 95, 130, 0.06)",
+        "purpose": "Pill buttons, small chips, and interactive dropdown triggers."
+      },
+      {
+        "name": "clay-inset",
+        "value": "inset 4px 4px 10px rgba(91, 82, 112, 0.1), inset -4px -4px 10px rgba(255, 255, 255, 0.9)",
+        "purpose": "Active pressed state on pill buttons and recessed form inputs."
+      }
+    ],
+    "motion": [
+      {
+        "name": "clay-press",
+        "value": "transform 180ms ease, box-shadow 180ms ease",
+        "purpose": "Physical tactile depression feedback on click/press."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main interactive call-to-action with clay tactile depth.",
+      "html": "<button class=\"ds-btn-primary\"><span>ออกแบบด้วย AI</span></button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #f6a3ca; color: #383139; font-family: var(--font-inter, sans-serif); font-size: 14px; font-weight: 600; padding: 10px 22px; border-radius: 9999px; border: none; cursor: pointer; box-shadow: 6px 6px 14px rgba(91,82,112,0.1), -4px -4px 12px rgba(255,255,255,0.85), inset 1px 1px 3px rgba(255,255,255,0.85), inset -1px -1px 4px rgba(110,95,130,0.06); transition: transform 180ms ease, box-shadow 180ms ease, opacity 180ms ease; } .ds-btn-primary:hover { opacity: 0.9; transform: translateY(-1px); } .ds-btn-primary:active { transform: translateY(1px) scale(0.98); box-shadow: inset 4px 4px 10px rgba(91,82,112,0.1), inset -4px -4px 10px rgba(255,255,255,0.9); } .ds-btn-primary:focus-visible { outline: 2px solid #d77aa8; outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Secondary action in Pistachio Mint for confirmations and catalog actions.",
+      "html": "<button class=\"ds-btn-secondary\"><span>ดูแบบสำเร็จ</span></button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #c0efdc; color: #383139; font-family: var(--font-inter, sans-serif); font-size: 14px; font-weight: 600; padding: 10px 22px; border-radius: 9999px; border: none; cursor: pointer; box-shadow: 6px 6px 14px rgba(91,82,112,0.08), -4px -4px 12px rgba(255,255,255,0.85); transition: transform 180ms ease, box-shadow 180ms ease; } .ds-btn-secondary:hover { transform: translateY(-1px); background: #b1e8d2; } .ds-btn-secondary:active { transform: translateY(1px) scale(0.98); } .ds-btn-secondary:focus-visible { outline: 2px solid #76cca8; outline-offset: 2px; }"
+    },
+    {
+      "name": "Product Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Sculpted 32px ceramic card for catalog furniture items.",
+      "html": "<div class=\"ds-card-product\"><div class=\"ds-card-img-placeholder\"></div><div class=\"ds-card-body\"><span class=\"ds-card-meta\">มินิมอล • ไม้โอ๊คแท้</span><h4 class=\"ds-card-title\">เก้าอี้พักผ่อน L’Ombre</h4><div class=\"ds-card-footer\"><span class=\"ds-card-price\">฿12,900</span><button class=\"ds-card-btn\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z\"/><path d=\"M3 6h18\"/><path d=\"M16 10a4 4 0 0 1-8 0\"/></svg></button></div></div></div>",
+      "css": ".ds-card-product { background: #fffdf7; border-radius: 32px; padding: 16px; border: 1px solid rgba(116,100,140,0.16); box-shadow: 12px 12px 28px rgba(91,82,112,0.1), -8px -8px 24px rgba(255,255,255,0.9), inset 2px 2px 5px rgba(255,255,255,0.85), inset -2px -2px 6px rgba(110,95,130,0.06); display: flex; flex-direction: column; width: 280px; transition: transform 300ms ease, box-shadow 300ms ease; } .ds-card-product:hover { transform: translateY(-4px); box-shadow: 14px 20px 36px rgba(91,82,112,0.13), -8px -8px 24px rgba(255,255,255,0.95); } .ds-card-img-placeholder { width: 100%; height: 180px; border-radius: 24px; background: #f1f2fa; margin-bottom: 14px; } .ds-card-body { display: flex; flex-direction: column; gap: 4px; } .ds-card-meta { font-size: 11px; color: #746d78; font-weight: 500; } .ds-card-title { font-size: 16px; font-weight: 700; color: #383139; margin: 0; } .ds-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; } .ds-card-price { font-size: 17px; font-weight: 700; color: #383139; } .ds-card-btn { width: 36px; height: 36px; border-radius: 9999px; background: #f6a3ca; color: #383139; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 180ms; } .ds-card-btn:hover { transform: scale(1.08); }"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Tactile pill indicator for product status and availability.",
+      "html": "<span class=\"ds-chip-mint\">พร้อมส่ง</span><span class=\"ds-chip-lavender\">สั่งผลิต</span>",
+      "css": ".ds-chip-mint { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 9999px; background: #c0efdc; color: #064e3b; font-size: 11px; font-weight: 700; letter-spacing: 0.02em; margin-right: 8px; } .ds-chip-lavender { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 9999px; background: #ded0f9; color: #4c1d95; font-size: 11px; font-weight: 700; letter-spacing: 0.02em; }"
+    },
+    {
+      "name": "Form Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Sunken ceramic form field with focus ring.",
+      "html": "<input class=\"ds-input\" placeholder=\"ค้นหาเฟอร์นิเจอร์ หรือขนาด...\" />",
+      "css": ".ds-input { width: 100%; height: 44px; background: #fffdf7; border: 1px solid rgba(116,100,140,0.22); border-radius: 16px; padding: 0 16px; font-size: 14px; color: #383139; outline: none; box-shadow: inset 2px 2px 6px rgba(91,82,112,0.05); transition: border-color 200ms ease, box-shadow 200ms ease; } .ds-input:focus { border-color: #f6a3ca; box-shadow: 0 0 0 3px rgba(215,122,168,0.25), inset 2px 2px 6px rgba(91,82,112,0.05); } .ds-input::placeholder { color: #746d78; }"
+    },
+    {
+      "name": "Capsule Navigation Bar",
+      "kind": "nav",
+      "refersTo": "nav",
+      "description": "Floating pill header with frosted glass and clay border relief.",
+      "html": "<header class=\"ds-nav-capsule\"><div class=\"ds-nav-logo\">M</div><nav class=\"ds-nav-links\"><a href=\"#\" class=\"ds-nav-item active\">หน้าแรก</a><a href=\"#\" class=\"ds-nav-item\">สินค้า</a><a href=\"#\" class=\"ds-nav-item ai\">AI Designer</a></nav></header>",
+      "css": ".ds-nav-capsule { display: flex; align-items: center; justify-content: space-between; background: rgba(255,253,247,0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(116,100,140,0.16); border-radius: 9999px; padding: 8px 18px; box-shadow: 12px 16px 32px rgba(91,79,115,0.08), -6px -6px 16px rgba(255,255,255,0.9), inset 1px 1px 3px rgba(255,255,255,0.8); } .ds-nav-logo { width: 34px; height: 34px; border-radius: 9999px; background: linear-gradient(135deg, #f6a3ca, #ded0f9); color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; } .ds-nav-links { display: flex; align-items: center; gap: 6px; } .ds-nav-item { padding: 6px 14px; border-radius: 9999px; font-size: 13px; font-weight: 500; color: #383139; text-decoration: none; transition: background 180ms ease; } .ds-nav-item:hover { background: #e9e8f3; } .ds-nav-item.active { background: #fff; box-shadow: 2px 2px 8px rgba(91,82,112,0.08); font-weight: 600; } .ds-nav-item.ai { background: linear-gradient(90deg, #ded0f9, #c0efdc); font-weight: 600; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Tactile Atelier",
+    "overview": "Maison Forme pairs the warmth of artisanal furniture craft with algorithmic design precision. Rather than following cold Scandinavian minimalism or harsh geometric dashboards, the interface evokes a physical workshop rendered in soft ceramic tones, warm cream foundations, and French macaron pastels. Surfaces feel physically sculpted—like hand-poured porcelain tiles with rounded pill contours and dual-directional soft light.\n\nThe aesthetic philosophy centers on tactile reassurance: every card, pill button, and floating container behaves like a tangible architectural element. Soft bevels, delicate inset reflections, and cushioned active states make technical tools—such as 3D cutting sheet nesting, BOM calculations, and dimensional specification—feel approachable, serene, and delightfully physical.",
+    "keyCharacteristics": [
+      "Tactile Claymorphism: Ambient drop shadows softened by pure white opposite-angle glow highlights and subtle inner rim bevels.",
+      "Sculpted Pill Silhouettes: Full-radius pill buttons, generous 32px card radii, and 54px structural outer containers that soften the viewport.",
+      "Confectionary Pastel Accents: Curated macaron accents (Blush Rose, Pistachio Mint, Soft Lavender) deployed purposefully against warm cream surfaces.",
+      "Architectural Typography: Inter for crisp geometric numerals and Latin titles, balanced with Kanit for warm, legible Thai typography."
+    ],
+    "rules": [
+      {
+        "name": "The No-Pitch-Black Rule",
+        "body": "Pure black (#000000) is strictly prohibited. All dark typography and high-emphasis elements use Deep Cocoa Plum (#383139) to preserve the warm, ceramic atmosphere.",
+        "section": "colors"
+      },
+      {
+        "name": "The Pastel Harmony Rule",
+        "body": "Vibrant saturated neons are banned. Pastels must maintain soft tint saturation (chroma ≤ 0.15 in OKLCH) so multiple pastels can coexist comfortably without visual fatigue.",
+        "section": "colors"
+      },
+      {
+        "name": "The Dual-Language Baseline Rule",
+        "body": "Thai typography (Kanit) requires 1.4–1.6× line-height relative to Latin equivalents to prevent ascender and descender clipping. Never compress line-height below 1.25 on headings containing Thai characters.",
+        "section": "typography"
+      },
+      {
+        "name": "The Physical Press Rule",
+        "body": "Interactive elements that boast raised clay depth must depress physically upon interaction (.clay-press:active: transform: translateY(1px) scale(0.98); box-shadow: var(--shadow-clay-inset)). Depth must feel reactive to touch.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use Ceramic Cream (#FFFDF7) on Periwinkle Base (#F1F2FA) to establish soft, warm contrast.",
+      "Do apply rounded-full to buttons, badges, and tabs for consistent organic pill form language.",
+      "Do accompany raised clay shadows with matching .clay-press tactile depression on active click.",
+      "Do preserve the dual-font setup (Inter for Latin numerals and technical stats; Kanit for natural Thai phrasing).",
+      "Do showcase material real-world dimensions (1220 × 2440 mm sheet sizes) and clear lead times on made-to-order items."
+    ],
+    "donts": [
+      "Don't use harsh pure black (#000000) for text or backgrounds; always use Deep Cocoa Plum (#383139).",
+      "Don't use sharp 0px or square corners; every element must carry at least an 8px radius.",
+      "Don't apply harsh, dark single-directional drop shadows; clay elevation requires dual light and inset highlights.",
+      "Don't introduce high-intensity neon colors or saturated primary reds/blues.",
+      "Don't reduce line-height below 1.25 on Thai headings."
+    ]
+  }
+}
