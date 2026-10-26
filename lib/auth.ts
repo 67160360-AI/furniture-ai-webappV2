@@ -15,6 +15,17 @@ export const auth = betterAuth({
     autoSignIn: true,
     minPasswordLength: 8,
   },
+  ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    ? {
+        socialProviders: {
+          google: {
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            prompt: 'select_account' as const,
+          },
+        },
+      }
+    : {}),
   user: {
     additionalFields: {
       // input: false prevents clients from setting their own role at sign-up.

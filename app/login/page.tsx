@@ -9,6 +9,7 @@ import { useStore, type UserProfile } from '@/components/store-context'
 import { signIn } from '@/lib/auth-client'
 import { Lock, Mail, ArrowRight } from 'lucide-react'
 import { toast } from 'sonner'
+import { GoogleSignInButton } from '@/components/google-sign-in-button'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -129,6 +130,13 @@ export default function LoginPage() {
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
+
+          <div className="relative flex items-center py-1" aria-hidden="true">
+            <div className="flex-1 border-t border-[#E5DFEB]" />
+            <span className="px-3 text-[11px] text-[#706A76]">หรือ</span>
+            <div className="flex-1 border-t border-[#E5DFEB]" />
+          </div>
+          <GoogleSignInButton />
 
           <div className="text-center text-xs text-[#706A76]">
             ยังไม่มีบัญชีสมาชิก?{' '}

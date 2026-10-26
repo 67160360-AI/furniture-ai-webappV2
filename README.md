@@ -59,6 +59,8 @@
    ```dotenv
    DATABASE_URL=postgresql://postgres:password@localhost:5432/maison_forme
    BETTER_AUTH_SECRET=replace-with-a-long-random-secret
+   GOOGLE_CLIENT_ID=your-google-oauth-client-id
+   GOOGLE_CLIENT_SECRET=your-google-oauth-client-secret
    ADMIN_SESSION_SECRET=replace-with-another-long-random-secret
    ADMIN_EMAIL=admin@example.com
    ADMIN_PASSWORD=replace-with-a-strong-password
@@ -96,11 +98,25 @@
 | `DATABASE_URL` | ใช่ | PostgreSQL connection string |
 | `BETTER_AUTH_SECRET` | ใช่สำหรับ Better Auth | secret สำหรับเซสชัน Better Auth |
 | `BETTER_AUTH_URL` | แนะนำใน production | URL หลักของเว็บไซต์ เช่น `https://example.com` |
+| `GOOGLE_CLIENT_ID` | ไม่บังคับ | OAuth Client ID จาก Google Cloud Console สำหรับ Google Sign-In |
+| `GOOGLE_CLIENT_SECRET` | ไม่บังคับ | OAuth Client Secret จาก Google Cloud Console เก็บเป็น secret และห้ามใส่ในโค้ดฝั่ง browser |
 | `ADMIN_EMAIL` | ใช่สำหรับล็อกอินแอดมิน | อีเมลแอดมินที่หน้า `/admin/login` ยอมรับ |
 | `ADMIN_PASSWORD` | ใช่สำหรับล็อกอินแอดมิน | รหัสผ่านแอดมิน ตั้งรหัสที่คาดเดายากและเก็บไว้นอก Git |
 | `ADMIN_SESSION_SECRET` | แนะนำ | secret สำหรับลงลายเซ็นคุกกี้แอดมิน หากไม่กำหนด ระบบใช้ `BETTER_AUTH_SECRET` เป็นค่า fallback |
 
 อย่า commit ไฟล์ `.env`, `.env.development.local` หรือ secrets ลง repository
+
+### เปิดใช้ Google Sign-In
+
+1. ใน Google Cloud Console สร้าง OAuth Client ID ประเภท **Web application** และตั้ง OAuth consent screen ให้เรียบร้อย
+2. เพิ่ม Authorized JavaScript origins สำหรับ `http://localhost:3000` และ URL Production ของเว็บ
+3. เพิ่ม Authorized redirect URIs:
+   - `http://localhost:3000/api/auth/callback/google`
+   - `https://<โดเมน-production>/api/auth/callback/google`
+4. ใส่ `GOOGLE_CLIENT_ID` และ `GOOGLE_CLIENT_SECRET` ใน `.env.development.local` และ Vercel Project → Settings → Environment Variables แล้วเลือก Production (และ Preview ถ้าต้องการทดสอบบน Preview)
+5. ตั้ง `BETTER_AUTH_URL` ใน Production เป็น URL หลักของเว็บ เช่น `https://<โดเมน-production>` ให้ตรงกับ OAuth callback แล้ว Redeploy
+
+ปุ่ม Google จะแสดงในหน้าเข้าสู่ระบบและสมัครสมาชิก เมื่อผู้ใช้ยืนยันตัวตน Better Auth จะสร้าง/เชื่อมบัญชีและบันทึก session ลงฐานข้อมูลเดียวกับระบบล็อกอินเดิม ผู้ใช้ที่มีอีเมลเดียวกันจะเชื่อมบัญชีได้เมื่อ Google ยืนยันอีเมลแล้ว
 
 ## Repository layout
 
