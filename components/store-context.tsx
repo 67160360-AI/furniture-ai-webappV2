@@ -72,30 +72,24 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [categories, setCategories] = useState<Category[]>(INITIAL_CATEGORIES)
   const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS)
   const [cart, setCart] = useState<CartItem[]>([])
-  const [user, setUser] = useState<UserProfile | null>({
-    id: 'u-demo-1',
-    name: 'คุณพัชราภรณ์ วงศ์สว่าง',
-    email: 'patcha@example.com',
-    role: 'customer',
-  })
+  const [user, setUser] = useState<UserProfile | null>(null)
   const [isHydrated, setIsHydrated] = useState(false)
   const [appliedPromo, setAppliedPromo] = useState<string | null>(null)
 
   // Hydrate from localStorage on client load
   useEffect(() => {
     try {
+      localStorage.removeItem('mf_user')
       const savedProducts = localStorage.getItem('mf_products')
       const savedCategories = localStorage.getItem('mf_categories')
       const savedOrders = localStorage.getItem('mf_orders')
       const savedCart = localStorage.getItem('mf_cart')
-      const savedUser = localStorage.getItem('mf_user')
       const savedPromo = localStorage.getItem('mf_promo')
 
       if (savedProducts) setProducts(JSON.parse(savedProducts))
       if (savedCategories) setCategories(JSON.parse(savedCategories))
       if (savedOrders) setOrders(JSON.parse(savedOrders))
       if (savedCart) setCart(JSON.parse(savedCart))
-      if (savedUser) setUser(JSON.parse(savedUser))
       if (savedPromo) setAppliedPromo(savedPromo)
     } catch (e) {
       console.warn('Could not read from localStorage:', e)
@@ -111,14 +105,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('mf_categories', JSON.stringify(categories))
       localStorage.setItem('mf_orders', JSON.stringify(orders))
       localStorage.setItem('mf_cart', JSON.stringify(cart))
-      if (user) localStorage.setItem('mf_user', JSON.stringify(user))
-      else localStorage.removeItem('mf_user')
       if (appliedPromo) localStorage.setItem('mf_promo', appliedPromo)
       else localStorage.removeItem('mf_promo')
     } catch (e) {
       console.warn('Could not write to localStorage:', e)
     }
-  }, [products, categories, orders, cart, user, appliedPromo, isHydrated])
+  }, [products, categories, orders, cart, appliedPromo, isHydrated])
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
   const cartSubtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)

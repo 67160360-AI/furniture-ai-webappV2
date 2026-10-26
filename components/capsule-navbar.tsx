@@ -8,7 +8,6 @@ import {
   ShoppingBag,
   Sparkles,
   Search,
-  User,
   Menu,
   X,
   ShieldCheck,
@@ -292,34 +291,43 @@ export function CapsuleNavbar() {
 
           {/* User Profile / Auth Dropdown - shrink-0 */}
           <div className="relative shrink-0">
-            <button
-              type="button"
-              onClick={() => {
-                setUserDropdownOpen(!userDropdownOpen)
-                setMoreMenuOpen(false)
-              }}
-              aria-expanded={userDropdownOpen}
-              aria-haspopup="true"
-              className="inline-flex items-center gap-1.5 bg-[#FFFDF7] hover:bg-[#F1F2FA] px-2.5 py-1.5 rounded-full border border-[#E5DFEB] shadow-[4px_4px_10px_rgba(91,79,115,0.08),-3px_-3px_8px_rgba(255,255,255,0.9)] active:scale-95 transition-all text-[#383139] shrink-0 whitespace-nowrap select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F6A3CA]"
-            >
-              <div
-                className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold leading-none text-white shrink-0 ${
-                  user?.role === 'admin' ? 'bg-[#9333EA]' : 'bg-[#F6A3CA]'
-                }`}
+            {user ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setUserDropdownOpen(!userDropdownOpen)
+                  setMoreMenuOpen(false)
+                }}
+                aria-expanded={userDropdownOpen}
+                aria-haspopup="true"
+                className="inline-flex items-center gap-1.5 bg-[#FFFDF7] hover:bg-[#F1F2FA] px-2.5 py-1.5 rounded-full border border-[#E5DFEB] shadow-[4px_4px_10px_rgba(91,79,115,0.08),-3px_-3px_8px_rgba(255,255,255,0.9)] active:scale-95 transition-all text-[#383139] shrink-0 whitespace-nowrap select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F6A3CA]"
               >
-                {user ? user.name.charAt(0) : <User className="w-3 h-3 shrink-0" />}
-              </div>
-              <span className="text-xs font-medium leading-none tracking-normal hidden sm:inline max-w-[70px] xl:max-w-[85px] 2xl:max-w-[110px] truncate whitespace-nowrap shrink-0">
-                {user ? user.name : 'เข้าสู่ระบบ'}
-              </span>
-              <ChevronDown
-                className={`w-3 h-3 text-[#706A76] shrink-0 transition-transform duration-200 ${
-                  userDropdownOpen ? 'rotate-180' : ''
-                }`}
-              />
-            </button>
+                <div
+                  className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold leading-none text-white shrink-0 ${
+                    user.role === 'admin' ? 'bg-[#9333EA]' : 'bg-[#F6A3CA]'
+                  }`}
+                >
+                  {user.name.charAt(0)}
+                </div>
+                <span className="text-xs font-medium leading-none tracking-normal hidden sm:inline max-w-[70px] xl:max-w-[85px] 2xl:max-w-[110px] truncate whitespace-nowrap shrink-0">
+                  {user.name}
+                </span>
+                <ChevronDown
+                  className={`w-3 h-3 text-[#706A76] shrink-0 transition-transform duration-200 ${
+                    userDropdownOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center gap-1.5 bg-[#F6A3CA] hover:bg-[#f08bb9] px-3 py-2 rounded-full border border-[#E5DFEB] shadow-[4px_4px_10px_rgba(91,79,115,0.08),-3px_-3px_8px_rgba(255,255,255,0.9)] active:scale-95 transition-all text-[#383139] text-xs font-bold shrink-0 whitespace-nowrap select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F6A3CA]"
+              >
+                เข้าสู่ระบบ
+              </Link>
+            )}
 
-            {userDropdownOpen && (
+            {user && userDropdownOpen && (
               <>
                 {/* Invisible backdrop to dismiss dropdown on outside click */}
                 <div
@@ -332,8 +340,7 @@ export function CapsuleNavbar() {
                   className="absolute right-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] bg-[#FFFDF7] rounded-3xl p-3 border border-[#E5DFEB] shadow-[12px_16px_36px_rgba(91,79,115,0.15),-6px_-6px_20px_rgba(255,255,255,0.9)] z-50 animate-in fade-in slide-in-from-top-2 duration-150"
                   role="menu"
                 >
-                  {user ? (
-                    <div className="space-y-2">
+                  <div className="space-y-2">
                       <div className="px-3 py-2 bg-[#F1F2FA] rounded-2xl">
                         <div className="font-semibold text-xs text-[#383139]">{user.name}</div>
                         <div className="text-xs text-[#706A76] truncate">{user.email}</div>
@@ -427,26 +434,7 @@ export function CapsuleNavbar() {
                           <span>ออกจากระบบ</span>
                         </button>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="p-2 space-y-2">
-                      <div className="text-xs text-[#706A76] text-center mb-2">ยินดีต้อนรับสู่ Maison Forme</div>
-                      <Link
-                        href="/login"
-                        onClick={() => setUserDropdownOpen(false)}
-                        className="block text-center py-2 px-3 bg-[#F6A3CA] text-[#383139] rounded-2xl text-xs font-bold hover:shadow-xs transition active:scale-98"
-                      >
-                        เข้าสู่ระบบ
-                      </Link>
-                      <Link
-                        href="/register"
-                        onClick={() => setUserDropdownOpen(false)}
-                        className="block text-center py-2 px-3 bg-[#F1F2FA] text-[#383139] rounded-2xl text-xs font-medium hover:bg-gray-200 transition"
-                      >
-                        สมัครสมาชิกใหม่
-                      </Link>
-                    </div>
-                  )}
+                  </div>
                 </div>
               </>
             )}
