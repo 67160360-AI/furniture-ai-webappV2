@@ -24,7 +24,7 @@ export default function RegisterPage() {
       return
     }
 
-    loginAs('customer')
+    loginAs({ name, email })
     toast.success('สมัครสมาชิกและเข้าสู่ระบบสำเร็จ ยินดีต้อนรับสู่ Maison Forme!')
     router.push('/')
   }

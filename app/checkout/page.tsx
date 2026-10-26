@@ -199,7 +199,7 @@ export default function CheckoutPage() {
   // Shipping Form State
   const [recipientName, setRecipientName] = useState(user?.name || '')
   const [phone, setPhone] = useState('089-123-4567')
-  const [email, setEmail] = useState(user?.email || 'patcha@example.com')
+  const [email, setEmail] = useState(user?.email || '')
   const [address, setAddress] = useState('99/12 หมู่บ้านศุภาลัยการ์เด้น ซอยสุขุมวิท 39')
   const [city, setCity] = useState('กรุงเทพมหานคร')
   const [postalCode, setPostalCode] = useState('10110')

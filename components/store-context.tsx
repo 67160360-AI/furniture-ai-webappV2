@@ -59,7 +59,7 @@ interface StoreContextType {
   updateCategory: (id: number, category: Partial<Category>) => void
   deleteCategory: (id: number) => void
   // Auth Demo
-  loginAs: (role: 'customer') => void
+  loginAs: (profile: { name: string; email: string }) => void
   loginAdmin: (user: UserProfile) => void
   logout: () => void
   // Reset demo data
@@ -290,12 +290,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setCategories((prev) => prev.filter((c) => c.id !== id))
   }
 
-  const loginAs = (_role: 'customer') => {
+  const loginAs = (profile: { name: string; email: string }) => {
     void fetch('/api/admin-session', { method: 'DELETE' }).catch(() => {})
     setUser({
-      id: 'u-demo-1',
-      name: 'คุณพัชราภรณ์ วงศ์สว่าง',
-      email: 'patcha@example.com',
+      id: profile.email.trim().toLowerCase(),
+      name: profile.name.trim(),
+      email: profile.email.trim().toLowerCase(),
       role: 'customer',
     })
   }
