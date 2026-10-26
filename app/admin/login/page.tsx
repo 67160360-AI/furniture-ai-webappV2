@@ -4,6 +4,7 @@ import { FormEvent, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useStore, type UserProfile } from '@/components/store-context'
+import { signOut } from '@/lib/auth-client'
 import { Lock, Mail, ShieldCheck } from 'lucide-react'
 
 export default function AdminLoginPage() {
@@ -25,6 +26,7 @@ export default function AdminLoginPage() {
       })
       const result = await response.json()
       if (!response.ok) throw new Error(result.error || 'เข้าสู่ระบบไม่สำเร็จ')
+      await signOut().catch(() => {})
       loginAdmin(result.user as UserProfile)
       router.replace('/admin')
       router.refresh()

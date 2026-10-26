@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import { signOut, useSession } from '@/lib/auth-client'
 import {
   Category,
   Product,
@@ -58,10 +59,10 @@ interface StoreContextType {
   addCategory: (category: Omit<Category, 'id'>) => Category
   updateCategory: (id: number, category: Partial<Category>) => void
   deleteCategory: (id: number) => void
-  // Auth Demo
-  loginAs: (profile: { name: string; email: string }) => void
+  // Authentication
+  loginUser: (profile: UserProfile) => void
   loginAdmin: (user: UserProfile) => void
-  logout: () => void
+  logout: () => Promise<void>
   // Reset demo data
   resetDemoData: () => void
 }
@@ -74,6 +75,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS)
   const [cart, setCart] = useState<CartItem[]>([])
   const [user, setUser] = useState<UserProfile | null>(null)
+  const { data: authSession, isPending: authSessionPending } = useSession()
   const [isHydrated, setIsHydrated] = useState(false)
   const [appliedPromo, setAppliedPromo] = useState<string | null>(null)
 
@@ -98,16 +100,25 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setIsHydrated(true)
   }, [])
 
-  // Read the signed admin session from the server so the account shown in the
-  // storefront matches the account that guards the admin area.
+  // Prefer the persisted Better Auth account; fall back to the fixed admin
+  // session used by the admin portal.
   useEffect(() => {
+    if (authSession?.user) {
+      setUser({
+        id: authSession.user.id,
+        name: authSession.user.name,
+        email: authSession.user.email,
+        role: authSession.user.role === 'admin' ? 'admin' : 'customer',
+      })
+      return
+    }
+    if (authSessionPending) return
+
     fetch('/api/admin-session', { cache: 'no-store' })
       .then((response) => response.json())
-      .then((result) => {
-        if (result.user) setUser(result.user as UserProfile)
-      })
+      .then((result) => setUser((current) => current ?? (result.user as UserProfile | null)))
       .catch(() => {})
-  }, [])
+  }, [authSession, authSessionPending])
 
   // Sync back to localStorage
   useEffect(() => {
@@ -290,23 +301,18 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setCategories((prev) => prev.filter((c) => c.id !== id))
   }
 
-  const loginAs = (profile: { name: string; email: string }) => {
-    void fetch('/api/admin-session', { method: 'DELETE' }).catch(() => {})
-    setUser({
-      id: profile.email.trim().toLowerCase(),
-      name: profile.name.trim(),
-      email: profile.email.trim().toLowerCase(),
-      role: 'customer',
-    })
+  const loginUser = (profile: UserProfile) => {
+    setUser(profile)
   }
 
   const loginAdmin = (admin: UserProfile) => {
     setUser(admin)
   }
 
-  const logout = () => {
+  const logout = async () => {
     setUser(null)
-    void fetch('/api/admin-session', { method: 'DELETE' }).catch(() => {})
+    await fetch('/api/admin-session', { method: 'DELETE' }).catch(() => {})
+    await signOut().catch(() => {})
   }
 
   const resetDemoData = () => {
@@ -343,7 +349,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         addCategory,
         updateCategory,
         deleteCategory,
-        loginAs,
+        loginUser,
         loginAdmin,
         logout,
         resetDemoData,

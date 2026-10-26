@@ -6,12 +6,13 @@ import { useRouter } from 'next/navigation'
 import { CapsuleNavbar } from '@/components/capsule-navbar'
 import { Footer } from '@/components/footer'
 import { useStore, type UserProfile } from '@/components/store-context'
+import { signIn } from '@/lib/auth-client'
 import { Lock, Mail, ArrowRight } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function LoginPage() {
   const router = useRouter()
-  const { loginAdmin } = useStore()
+  const { loginAdmin, loginUser } = useStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -26,13 +27,34 @@ export default function LoginPage() {
 
     setPending(true)
     try {
+      let authError = ''
+      try {
+        const { data, error } = await signIn.email({ email: email.trim().toLowerCase(), password })
+        if (data?.user) {
+          await fetch('/api/admin-session', { method: 'DELETE' })
+          const role = data.user.role === 'admin' ? 'admin' : 'customer'
+          loginUser({
+            id: data.user.id,
+            name: data.user.name,
+            email: data.user.email,
+            role,
+          })
+          toast.success('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับกลับมา')
+          router.replace(role === 'admin' ? '/admin' : '/')
+          return
+        }
+        authError = error?.message ?? ''
+      } catch (error) {
+        authError = error instanceof Error ? error.message : ''
+      }
+
       const response = await fetch('/api/admin-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       })
       const result = await response.json()
-      if (!response.ok) throw new Error(result.error || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง')
+      if (!response.ok) throw new Error(authError || result.error || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง')
       loginAdmin(result.user as UserProfile)
       toast.success('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับกลับมา')
       router.replace('/')

@@ -18,7 +18,7 @@ import {
 export function CapsuleNavbar() {
   const pathname = usePathname()
   const router = useRouter()
-  const { cartCount, user, loginAs, logout } = useStore()
+  const { cartCount, user, logout } = useStore()
   const [searchQuery, setSearchQuery] = useState('')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userDropdownOpen, setUserDropdownOpen] = useState(false)

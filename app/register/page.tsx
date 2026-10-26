@@ -6,27 +6,44 @@ import { useRouter } from 'next/navigation'
 import { CapsuleNavbar } from '@/components/capsule-navbar'
 import { Footer } from '@/components/footer'
 import { useStore } from '@/components/store-context'
+import { signUp } from '@/lib/auth-client'
 import { User, Lock, Mail, Phone, ArrowRight } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function RegisterPage() {
   const router = useRouter()
-  const { loginAs } = useStore()
+  const { loginUser } = useStore()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
+  const [pending, setPending] = useState(false)
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name || !email || !password) {
       toast.error('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน')
       return
     }
 
-    loginAs({ name, email })
-    toast.success('สมัครสมาชิกและเข้าสู่ระบบสำเร็จ ยินดีต้อนรับสู่ Maison Forme!')
-    router.push('/')
+    setPending(true)
+    try {
+      await fetch('/api/admin-session', { method: 'DELETE' })
+      const { data, error } = await signUp.email({
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        password,
+        phone: phone.trim() || undefined,
+      })
+      if (error || !data?.user) throw new Error(error?.message || 'สมัครสมาชิกไม่สำเร็จ กรุณาลองใหม่')
+      loginUser({ id: data.user.id, name: data.user.name, email: data.user.email, role: 'customer' })
+      toast.success('สมัครสมาชิกและเข้าสู่ระบบสำเร็จ ยินดีต้อนรับสู่ Maison Forme!')
+      router.replace('/')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'สมัครสมาชิกไม่สำเร็จ')
+    } finally {
+      setPending(false)
+    }
   }
 
   return (
@@ -107,6 +124,7 @@ export default function RegisterPage() {
                 <input
                   type="password"
                   required
+                  minLength={8}
                   placeholder="อย่างน้อย 8 ตัวอักษร"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -118,9 +136,10 @@ export default function RegisterPage() {
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-full bg-[#F6A3CA] hover:bg-[#f08bb9] text-white font-bold text-sm shadow-[6px_8px_20px_rgba(246,163,202,0.4)] active:scale-98 transition flex items-center justify-center gap-2"
+              disabled={pending}
+              className="w-full py-3.5 rounded-full bg-[#F6A3CA] hover:bg-[#f08bb9] text-white font-bold text-sm shadow-[6px_8px_20px_rgba(246,163,202,0.4)] active:scale-98 transition flex items-center justify-center gap-2 disabled:opacity-60"
             >
-              <span>ยืนยันสมัครสมาชิก</span>
+              <span>{pending ? 'กำลังสมัคร…' : 'ยืนยันสมัครสมาชิก'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>

@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS "user" (
   "id" text PRIMARY KEY,
   "name" text NOT NULL,
   "email" text NOT NULL UNIQUE,
+  "phone" text,
   "emailVerified" boolean NOT NULL DEFAULT false,
   "image" text,
   "role" text NOT NULL DEFAULT 'customer',
@@ -12,6 +13,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 );
 
 ALTER TABLE "user" ADD COLUMN IF NOT EXISTS "role" text NOT NULL DEFAULT 'customer';
+ALTER TABLE "user" ADD COLUMN IF NOT EXISTS "phone" text;
 
 CREATE TABLE IF NOT EXISTS "session" (
   "id" text PRIMARY KEY,

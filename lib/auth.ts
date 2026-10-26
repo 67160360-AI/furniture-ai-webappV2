@@ -19,6 +19,7 @@ export const auth = betterAuth({
     additionalFields: {
       // input: false prevents clients from setting their own role at sign-up.
       role: { type: 'string', defaultValue: 'customer', input: false },
+      phone: { type: 'string', required: false },
     },
   },
   rateLimit: {
