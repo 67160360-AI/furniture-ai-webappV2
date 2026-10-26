@@ -307,7 +307,7 @@ export function CapsuleNavbar() {
                 >
                   {user.name.charAt(0)}
                 </div>
-                <span className="text-xs font-medium leading-none tracking-normal hidden sm:inline min-w-0 max-w-[70px] xl:max-w-[85px] 2xl:max-w-[110px] truncate whitespace-nowrap">
+                <span className="text-xs font-medium leading-none tracking-normal hidden 2xl:inline min-w-0 max-w-[70px] 2xl:max-w-[90px] truncate whitespace-nowrap">
                   {user.role === 'admin' ? 'ผู้ดูแลระบบ' : user.name}
                 </span>
                 <ChevronDown
