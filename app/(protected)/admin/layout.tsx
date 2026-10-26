@@ -5,8 +5,9 @@ import { getSession, isAdminUser } from '@/lib/session'
 import AdminShell from './admin-shell'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const token = (await cookies()).get(ADMIN_COOKIE)?.value
-  if (!isValidAdminToken(token)) {
+  const adminTokens = (await cookies()).getAll(ADMIN_COOKIE)
+  const hasValidAdminCookie = adminTokens.some(({ value }) => isValidAdminToken(value))
+  if (!hasValidAdminCookie) {
     let authorized = false
     try {
       const session = await getSession()

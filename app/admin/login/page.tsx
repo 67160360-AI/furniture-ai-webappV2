@@ -1,14 +1,12 @@
 'use client'
 
 import { FormEvent, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useStore, type UserProfile } from '@/components/store-context'
 import { signOut } from '@/lib/auth-client'
 import { Lock, Mail, ShieldCheck } from 'lucide-react'
 
 export default function AdminLoginPage() {
-  const router = useRouter()
   const { loginAdmin } = useStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -28,8 +26,7 @@ export default function AdminLoginPage() {
       if (!response.ok) throw new Error(result.error || 'เข้าสู่ระบบไม่สำเร็จ')
       await signOut().catch(() => {})
       loginAdmin(result.user as UserProfile)
-      router.replace('/admin')
-      router.refresh()
+      window.location.assign('/admin')
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'เข้าสู่ระบบไม่สำเร็จ')
     } finally {

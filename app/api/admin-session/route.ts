@@ -10,8 +10,8 @@ function getAdminProfile() {
 }
 
 export async function GET() {
-  const token = (await cookies()).get(ADMIN_COOKIE)?.value
-  if (!isValidAdminToken(token)) return NextResponse.json({ user: null })
+  const tokens = (await cookies()).getAll(ADMIN_COOKIE)
+  if (!tokens.some(({ value }) => isValidAdminToken(value))) return NextResponse.json({ user: null })
   return NextResponse.json({ user: getAdminProfile() }, { headers: { 'Cache-Control': 'no-store' } })
 }
 
@@ -32,7 +32,6 @@ export async function POST(request: NextRequest) {
       path: '/',
       maxAge: 60 * 60 * 8,
     })
-    response.cookies.set(ADMIN_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/admin', maxAge: 0 })
     return response
   } catch {
     return NextResponse.json({ error: 'ระบบยืนยันตัวตนไม่พร้อมใช้งาน' }, { status: 503 })
