@@ -85,11 +85,9 @@ export function CapsuleNavbar() {
           className="flex items-center gap-2 group shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F6A3CA] rounded-full select-none"
           aria-label="Maison Forme หน้าหลัก"
         >
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-[#F6A3CA] to-[#DED0F9] flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8),3px_3px_8px_rgba(91,79,115,0.15)] group-hover:scale-105 transition-transform shrink-0 leading-none">
-            M
-          </div>
+          <img src="/icon.svg" alt="" width="36" height="36" className="w-8 h-8 sm:w-9 sm:h-9 group-hover:scale-105 transition-transform shrink-0" />
           <span className="font-bold text-lg sm:text-xl tracking-tight leading-none text-[#383139] font-heading hidden sm:inline whitespace-nowrap">
-            Maison <span className="text-[#F6A3CA]">Forme</span>
+            Maison Forme
           </span>
         </Link>
 

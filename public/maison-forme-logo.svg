@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 112" fill="none">
+  <g transform="translate(4 4)">
+    <rect width="104" height="104" rx="24" fill="#342D32"/>
+    <path d="M24 78V26h12l16 21 16-21h12v52H67V48L52 67 37 48v30H24Z" fill="#FFFDF7"/>
+    <path d="M78 19h9v9h-9z" fill="#C9949C"/>
+  </g>
+  <text x="132" y="58" fill="#342D32" font-family="Inter, Avenir, Helvetica, Arial, sans-serif" font-size="38" font-weight="600" letter-spacing="1.4">MAISON FORME</text>
+  <path d="M134 76h37" stroke="#C9949C" stroke-width="2"/>
+  <text x="181" y="81" fill="#766D70" font-family="Inter, Avenir, Helvetica, Arial, sans-serif" font-size="11" font-weight="500" letter-spacing="2.5">FURNITURE &amp; DESIGN</text>
+</svg>

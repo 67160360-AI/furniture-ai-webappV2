@@ -21,11 +21,7 @@ export const metadata: Metadata = {
     'ร้านเฟอร์นิเจอร์ออนไลน์ Maison Forme ค้นพบเฟอร์นิเจอร์ที่ใช่ หรือให้ AI ช่วยออกแบบพื้นที่และเฟอร์นิเจอร์ให้เหมาะกับไลฟ์สไตล์ของคุณ',
   generator: 'v0.app',
   icons: {
-    icon: [
-      { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
-      { url: '/icon-dark-32x32.png', media: '(prefers-color-scheme: dark)' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
-    ],
+    icon: '/icon.svg',
     apple: '/apple-icon.png',
   },
 }
